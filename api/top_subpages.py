@@ -3,11 +3,17 @@ import json
 import requests
 from googleapiclient.discovery import build
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from cache.cache import InMemoryCache
 
 API_KEY = os.getenv('API_KEY')
 CRUX_API_KEY = os.getenv('CRUX_API_KEY')
 CX_ID = os.getenv('CX_ID')
 NUM_WORKER=50
+
+cache = InMemoryCache(max_size=100)
+
+def cache_key(url, n):
+    return f"{url}-{n}"
 
 def _top_subpages(url, num):
     query = "site:{}".format(url)
@@ -93,7 +99,22 @@ def _fetch_lcp_75_crux(url, crux_key):
 
     return lcp_results
 
+def fetch_from_cache(url, n):
+    key = cache_key(url, n)
+    if cache.contains(key):
+        return cache.get(key), True
+    
+    return None, False
+
+def set_in_cache(url, n, data):
+    key = cache_key(url, n)
+    cache.set(key, data)
+
 def run(url, n):
+    cache_value, found = fetch_from_cache(url, n)
+    if found:
+        return {"success": True, "data": cache_value}
+    
     top_subpages = _top_subpages(url, n)
     lcp_data_list = _fetch_lcp_results(top_subpages, CRUX_API_KEY)
 
@@ -103,4 +124,5 @@ def run(url, n):
         "lcp_data": lcp_data_list
     }
 
+    set_in_cache(url, n, data)
     return {"success": True, "data": data}
