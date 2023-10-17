@@ -5,6 +5,15 @@ import urllib.parse
 
 app = FastAPI()
 
+@app.middleware("http")
+async def add_cors_headers(request, call_next):
+    response = await call_next(request)
+    response.headers["Access-Control-Allow-Origin"] = "https://prism-bi-ui.vercel.app, http://localhost:3000", "http://127.0.0.1:3000"
+    response.headers["Access-Control-Allow-Credentials"] = "true"
+    response.headers["Access-Control-Allow-Methods"] = "GET, POST, PUT, DELETE, OPTIONS"
+    response.headers["Access-Control-Allow-Headers"] = "Content-Type, Authorization"
+    return response
+
 origins = [
     "http://localhost:3000",
     "http://127.0.0.1:3000",
