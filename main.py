@@ -30,12 +30,12 @@ app.add_middleware(
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/top-subpages")
+@app.get("/top-subpages-lcp")
 async def top_subpages(url: str = Query(..., title="Encoded URL"), n: int = Query(10, title="n")):
     # Decode the URL
     decoded_url = urllib.parse.unquote(url)
-    
-    # Your logic to use the decoded URL and 'n' goes here
-    # For now, let's just return the decoded URL and 'n'
-    # return {"decoded_url": decoded_url, "n": n}
-    return api_top_subpages.run(decoded_url, n)
+    return api_top_subpages.run_lcp(decoded_url, n)
+
+@app.get("/top-subpages")
+async def top_subpages():
+    return api_top_subpages.run_top_subpages()

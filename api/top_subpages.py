@@ -3,12 +3,16 @@ import json
 import requests
 from googleapiclient.discovery import build
 from concurrent.futures import ThreadPoolExecutor, as_completed
+
 from cache.cache import InMemoryCache
+from helper.file import read_json_file
 
 API_KEY = os.getenv('API_KEY')
 CRUX_API_KEY = os.getenv('CRUX_API_KEY')
 CX_ID = os.getenv('CX_ID')
 NUM_WORKER=50
+
+TOP_SUBPAGES_FILE_PATH = './static/top_subpages.json'
 
 cache = InMemoryCache(max_size=100)
 
@@ -110,7 +114,7 @@ def set_in_cache(url, n, data):
     key = cache_key(url, n)
     cache.set(key, data)
 
-def run(url, n):
+def run_lcp(url, n):
     cache_value, found = fetch_from_cache(url, n)
     if found:
         return {"success": True, "data": cache_value}
@@ -125,4 +129,11 @@ def run(url, n):
     }
 
     set_in_cache(url, n, data)
+    return {"success": True, "data": data}
+
+def run_top_subpages():
+    data = read_json_file(TOP_SUBPAGES_FILE_PATH)
+    if data is None:
+        return {"success": False, "data": None}
+    
     return {"success": True, "data": data}
