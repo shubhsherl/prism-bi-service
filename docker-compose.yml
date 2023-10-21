@@ -24,6 +24,8 @@ services:
       - CRUX_API_KEY=${CRUX_API_KEY}
     networks:
       - app-network
+    volumes:
+      - ./static:/app/static
 
   cron-worker:
     build:
@@ -38,6 +40,8 @@ services:
       - WPT_API_KEY=${WPT_API_KEY}
     networks:
       - app-network
+    volumes:
+      - ./static:/app/static
 
 networks:
   app-network:
