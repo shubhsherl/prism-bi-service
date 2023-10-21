@@ -1,0 +1,244 @@
+[
+    {
+        "name": "apple",
+        "origin": "https://www.apple.com",
+        "children": [
+            "/cn",
+            "/my",
+            "/tr",
+            "/es",
+            "/vn",
+            "/mac",
+            "/in",
+            "/th",
+            "/retail",
+            "/safari",
+            "/imovie"
+        ]
+    },
+    {
+        "name": "tv-apple",
+        "origin": "https://tv.apple.com",
+        "children": [
+            "/gb"
+        ]
+    },
+    {
+        "name": "support-apple",
+        "origin": "https://support.apple.com",
+        "children": [
+            "/repair",
+            "/billing"
+        ]
+    },
+    {
+        "name": "developer-apple",
+        "origin": "https://developer.apple.com",
+        "children": [
+            "/jp",
+            "/maps",
+            "/kr"
+        ]
+    },
+    {
+        "name": "etsy",
+        "origin": "https://www.etsy.com",
+        "children": [
+            "/shipping",
+            "/codeascraft",
+            "/ie/",
+            "/es/",
+            "/it/",
+            "/fr/",
+            "/de/",
+            "/join",
+            "/registry",
+            "/nl/",
+            "/c",
+            "/mx/",
+            "/sell",
+            "/market/baby_registry",
+            "/market/t%C3%BCrk%C3%A7e",
+            "/legal/fees/",
+            "/shop/AndradeArtworks",
+            "/c/weddings",
+            "/market/merkin_pubic_wig"
+        ]
+    },
+    {
+        "name": "amazon",
+        "origin": "https://www.amazon.com",
+        "children": [
+            "/amazonprime",
+            "/primesavings"
+        ]
+    },
+    {
+        "name": "music-amazon",
+        "origin": "https://music.amazon.com",
+        "children": []
+    },
+    {
+        "name": "sell-amazon",
+        "origin": "https://sell.amazon.com",
+        "children": []
+    },
+    {
+        "name": "studios-amazon",
+        "origin": "https://studios.amazon.com",
+        "children": []
+    },
+    {
+        "name": "videodirect-amazon",
+        "origin": "https://videodirect.amazon.com",
+        "children": []
+    },
+    {
+        "name": "sellercentral-amazon",
+        "origin": "https://sellercentral.amazon.com",
+        "children": []
+    },
+    {
+        "name": "aws-amazon",
+        "origin": "https://aws.amazon.com",
+        "children": [
+            "/lex",
+            "/glue",
+            "/startups",
+            "/connect",
+            "/pricing",
+            "/calculator",
+            "/rds",
+            "/cloudformation",
+            "/s3",
+            "/appsync",
+            "/eventbridge",
+            "/neptune"
+        ]
+    },
+    {
+        "name": "walmart",
+        "origin": "https://www.walmart.com",
+        "children": [
+            "/help",
+            "/services",
+            "/lists",
+            "/tradein",
+            "/store-directory"
+        ]
+    },
+    {
+        "name": "photos3-walmart",
+        "origin": "https://photos3.walmart.com",
+        "children": []
+    },
+    {
+        "name": "inhome-walmart",
+        "origin": "https://inhome.walmart.com",
+        "children": []
+    },
+    {
+        "name": "drive4spark-walmart",
+        "origin": "https://drive4spark.walmart.com",
+        "children": [
+            "/signup"
+        ]
+    },
+    {
+        "name": "marketplace-walmart",
+        "origin": "https://marketplace.walmart.com",
+        "children": []
+    },
+    {
+        "name": "developer-walmart",
+        "origin": "https://developer.walmart.com",
+        "children": []
+    },
+    {
+        "name": "corporate-walmart",
+        "origin": "https://corporate.walmart.com",
+        "children": [
+            "/recalls"
+        ]
+    },
+    {
+        "name": "careers-walmart",
+        "origin": "https://careers.walmart.com",
+        "children": [
+            "/faqs",
+            "/technology",
+            "/healthcare",
+            "/values",
+            "/history"
+        ]
+    },
+    {
+        "name": "bootbarn",
+        "origin": "https://www.bootbarn.com",
+        "children": [
+            "/passwordreset",
+            "/login",
+            "/giftcards.html",
+            "/blog/country",
+            "/cody_james.html",
+            "/idyllwind.html",
+            "/work.html",
+            "/clearance.html",
+            "/brands/wolverine/wolverine/",
+            "/brands/laredo/laredo/",
+            "/brands/belleville/belleville/",
+            "/fr-work.html",
+            "/mens-coats.html",
+            "/brands/heydude/heydude/",
+            "/brands/idyllwind/idyllwind/",
+            "/womens-coats.html",
+            "/brands/stanley/stanley/",
+            "/womens-wonderwest.html"
+        ]
+    },
+    {
+        "name": "careers-bootbarn",
+        "origin": "https://careers.bootbarn.com",
+        "children": [
+            "/login"
+        ]
+    },
+    {
+        "name": "nike",
+        "origin": "https://www.nike.com",
+        "children": [
+            "/skateboarding",
+            "/women",
+            "/uy/",
+            "/au/",
+            "/my/",
+            "/joyride",
+            "/il/",
+            "/ph/",
+            "/membership",
+            "/nikewellcollective",
+            "/lu/",
+            "/za/",
+            "/launch",
+            "/basketball",
+            "/ma/",
+            "/running",
+            "/ch/",
+            "/cn/acg",
+            "/cn/sportswear",
+            "/apple-watch",
+            "/ca/jordan",
+            "/pl/mezczyzni",
+            "/running/alphafly",
+            "/fr/skateboard",
+            "/pl/kobiety",
+            "/fr/running",
+            "/pl/flyknit",
+            "/fr/femme",
+            "/gb/launch",
+            "/ca/flyknit",
+            "/tr/retail",
+            "/ro/jordan"
+        ]
+    }
+]

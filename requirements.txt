@@ -2,3 +2,6 @@ fastapi
 requests
 uvicorn[standard]
 google-api-python-client
+schedule
+bs4
+prettytable

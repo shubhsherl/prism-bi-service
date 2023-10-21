@@ -1,21 +1,22 @@
 # prism-service
 
 1. Add env variables to .env file
-
 ```
-export API_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"``
-export CRUX_API_KEY="xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-export CX_ID="xxxxxxxxxxxx"
-```
-
-2. Install dependencies
-
-```
-pip install -r requirements.txt
+API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+CRUX_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+CX_ID=xxxxxxxxxxxx
+REDIS_PASSWORD=xxxxxxxxxxx
 ```
 
-3. Run the app
+2. Run and up docker compose
 
 ```
-uvicorn main:app
+docker-compose up -d # to run in background
+<OR>
+docker-compose up # to run in foreground
+```
+
+### Stop docker compose
+```
+docker-compose down
 ```

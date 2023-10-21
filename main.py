@@ -1,6 +1,7 @@
 from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 import api.top_subpages as api_top_subpages
+import api.test_results as api_test_results
 import urllib.parse
 
 app = FastAPI()
@@ -39,3 +40,7 @@ async def top_subpages(url: str = Query(..., title="Encoded URL"), n: int = Quer
 @app.get("/top-subpages")
 async def top_subpages():
     return api_top_subpages.run_top_subpages()
+
+@app.get("/test-results")
+async def test_results():
+    return api_test_results.run()

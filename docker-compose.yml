@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  redis:
+    image: redis:latest
+    ports:
+      - "6379:6379"
+    environment:
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+  
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile.api
+    ports:
+      - "8000:8000"
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - API_KEY=${API_KEY}
+      - CX_ID=${CX_ID}
+      - CRUX_API_KEY=${CRUX_API_KEY}
+    networks:
+      - app-network
+
+  cron-worker:
+    build:
+      context: .
+      dockerfile: Dockerfile.worker
+    depends_on:
+      - redis
+    environment:
+      - REDIS_HOST=redis
+      - REDIS_PASSWORD=${REDIS_PASSWORD}
+      - WPT_URL=${WPT_URL}
+      - WPT_API_KEY=${WPT_API_KEY}
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
