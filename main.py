@@ -2,6 +2,7 @@ from fastapi import FastAPI, Query
 from fastapi.middleware.cors import CORSMiddleware
 import api.top_subpages as api_top_subpages
 import api.test_results as api_test_results
+import api.crux_results as api_crux_results
 import urllib.parse
 
 app = FastAPI()
@@ -44,3 +45,7 @@ async def top_subpages():
 @app.get("/test-results")
 async def test_results():
     return api_test_results.run()
+
+@app.get("/crux-results")
+async def crux_results():
+    return api_crux_results.run()
