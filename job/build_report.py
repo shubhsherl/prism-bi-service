@@ -91,6 +91,7 @@ def fetch_results():
 
         # Wait for all tasks to complete and collect their results
         results = [future.result() for future in as_completed(futures)]
+        results = [item for sublist in results for item in sublist]
     
     return results
 

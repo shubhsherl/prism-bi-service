@@ -9,6 +9,7 @@ CRUX_RESULTS_FILE = "static/crux_results.json"
 URLS_FILE = "static/urls.json"
 
 def fetch_crux_data(url):
+    print(f"Fetching CrUX data for {url}...")
     # Construct the request URL.
     crux_url = "https://chromeuxreport.googleapis.com/v1/records:queryRecord?key={}".format(CRUX_API_KEY)
     
