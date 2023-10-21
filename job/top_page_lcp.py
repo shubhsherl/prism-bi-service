@@ -39,6 +39,7 @@ def fetch_lcp_data(url):
         retry_after = int(response.headers.get("Retry-After", 30))
         print(f"Retrying after {retry_after} seconds...")
         time.sleep(retry_after)
+        return fetch_lcp_data(url)
 
     # Parse the response.
     data = response.json()
