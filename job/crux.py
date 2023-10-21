@@ -6,6 +6,8 @@ import requests
 CRUX_API_KEY = os.getenv('CRUX_API_KEY')
 CRUX_RESULTS_FILE = "static/crux_results.json"
 
+URLS_FILE = "static/urls.json"
+
 def fetch_crux_data(url):
     # Construct the request URL.
     crux_url = "https://chromeuxreport.googleapis.com/v1/records:queryRecord?key={}".format(CRUX_API_KEY)
@@ -67,7 +69,7 @@ def run():
 
     urls = []
     # load urls.json file
-    with open('urls.json') as f:
+    with open(URLS_FILE) as f:
         urls = json.load(f)
 
     reports = []
