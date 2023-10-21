@@ -8,8 +8,8 @@ import wpt.keys as wpt_keys
 
 MAX_DAYS = 30
 
-NUM_WORKER = int(os.getenv('NUM_WORKER', '6000'))
-CHUNK_SIZE = int(os.getenv('CHUNK_SIZE', '1'))
+NUM_WORKER = int(os.getenv('NUM_WORKER', '10'))
+CHUNK_SIZE = int(os.getenv('CHUNK_SIZE', '100'))
 
 TEST_RESULTS_FILE = "static/test_results.json"
 URLS_FILE = "static/urls.json"
