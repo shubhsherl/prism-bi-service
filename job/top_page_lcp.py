@@ -1,4 +1,5 @@
 import os
+import time
 import requests
 import json
 
@@ -33,6 +34,11 @@ def fetch_lcp_data(url):
     if response.status_code != 200:
         print(f"Error while fetching CrUX data for {url}: {response.status_code}")
         return
+    elif response.status_code == 429:
+        # Handle 429 error by waiting and then retrying
+        retry_after = int(response.headers.get("Retry-After", 30))
+        print(f"Retrying after {retry_after} seconds...")
+        time.sleep(retry_after)
 
     # Parse the response.
     data = response.json()
