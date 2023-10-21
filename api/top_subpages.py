@@ -12,7 +12,7 @@ CRUX_API_KEY = os.getenv('CRUX_API_KEY')
 CX_ID = os.getenv('CX_ID')
 NUM_WORKER=50
 
-TOP_SUBPAGES_FILE_PATH = './static/top_subpages.json'
+TOPPAGES_FILE_PATH = './static/toppages.json'
 
 cache = InMemoryCache(max_size=100)
 
@@ -132,7 +132,7 @@ def run_lcp(url, n):
     return {"success": True, "data": data}
 
 def run_top_subpages():
-    data = read_json_file(TOP_SUBPAGES_FILE_PATH)
+    data = read_json_file(TOPPAGES_FILE_PATH)
     if data is None:
         return {"success": False, "data": None}
     
