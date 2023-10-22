@@ -38,6 +38,7 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
       - WPT_URL=${WPT_URL}
       - WPT_API_KEY=${WPT_API_KEY}
+      - CRUX_API_KEY=${CRUX_API_KEY}
     networks:
       - app-network
     volumes:
