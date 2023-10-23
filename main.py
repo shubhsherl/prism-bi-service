@@ -18,7 +18,9 @@ async def add_cors_headers(request, call_next):
     return response
 
 origins = [
-    "https://prism-bi-ui.vercel.app"
+    "https://prism-bi-ui.vercel.app",
+    "http://localhost:3000",
+    "http://127.0.0.1:3000"
 ]
 
 app.add_middleware(
