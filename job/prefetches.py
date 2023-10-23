@@ -68,7 +68,6 @@ def run():
         url = 'https://www.' + domain['domain']
         hints = fetch_and_analyze_hints(url)
         results.append(hints)
-        break
     
     with open(PREFETCHES_FILE_PATH, "w") as file:
         json.dump(results, file, indent=4)
