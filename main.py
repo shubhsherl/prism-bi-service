@@ -3,6 +3,7 @@ from fastapi.middleware.cors import CORSMiddleware
 import api.top_subpages as api_top_subpages
 import api.test_results as api_test_results
 import api.crux_results as api_crux_results
+import api.url_prefetches as api_url_prefetches
 import urllib.parse
 
 app = FastAPI()
@@ -49,3 +50,7 @@ async def test_results():
 @app.get("/crux-results")
 async def crux_results():
     return api_crux_results.run()
+
+@app.get("/url-prefetches")
+async def url_prefetches():
+    return api_url_prefetches.run()
