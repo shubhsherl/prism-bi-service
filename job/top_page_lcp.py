@@ -80,4 +80,3 @@ def run():
         json.dump(updated_domains, file, indent=4)
 
     print(f"Updated JSON saved to {TOPPAGES_FILE_PATH}")
-

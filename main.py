@@ -37,7 +37,6 @@ async def root():
 
 @app.get("/top-subpages-lcp")
 async def top_subpages(url: str = Query(..., title="Encoded URL"), n: int = Query(10, title="n")):
-    # Decode the URL
     decoded_url = urllib.parse.unquote(url)
     return api_top_subpages.run_lcp(decoded_url, n)
 
