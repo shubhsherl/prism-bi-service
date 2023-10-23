@@ -2,10 +2,12 @@
 
 1. Add env variables to .env file
 ```
-API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-CRUX_API_KEY=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-CX_ID=xxxxxxxxxxxx
+API_KEY=xxxxxxxxxxxxxx-xxxxx-xxxxx
+CRUX_API_KEY=xxxxxxxxxxxxxx-xxxxx-xxxxx
+CX_ID=xxxxxxxxxxxxxx
 REDIS_PASSWORD=xxxxxxxxxxx
+WPT_URL=http://52.204.137.156:8000
+WPT_API_KEY=xxxxxxxxxxxxxx-xxxxx-xxxxx
 ```
 
 2. Run and up docker compose
