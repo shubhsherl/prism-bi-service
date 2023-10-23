@@ -1,0 +1,17 @@
+[
+    {
+        "url": "https://www.amazon.com",
+        "desktop": {
+            "html_preconnects": 3,
+            "html_preloads": 0,
+            "http_preconnects": 0,
+            "http_preloads": 0
+        },
+        "phone": {
+            "html_preconnects": 3,
+            "html_preloads": 0,
+            "http_preconnects": 0,
+            "http_preloads": 0
+        }
+    }
+]
