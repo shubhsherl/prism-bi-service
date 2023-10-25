@@ -6,3 +6,5 @@ schedule
 bs4
 prettytable
 pytz
+boto3
+redis

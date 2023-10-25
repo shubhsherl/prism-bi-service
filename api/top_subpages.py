@@ -5,6 +5,7 @@ from googleapiclient.discovery import build
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from pkg.s3.client import S3Client
 from cache.cache import InMemoryCache
 from helper.file import read_json_file
 
@@ -26,6 +27,7 @@ FORM_FACTOR_AGENT = {
 NUM_WORKER=50
 
 TOPPAGES_FILE_PATH = './static/toppages.json'
+TOPPAGES_KEY = 'public/toppages_v1.json'
 
 cache = InMemoryCache(max_size=100)
 
@@ -190,8 +192,16 @@ def run_lcp(url, n):
     return {"success": True, "data": data}
 
 def run_top_subpages():
-    data = read_json_file(TOPPAGES_FILE_PATH)
+    s3_client = S3Client()
+    data_str = s3_client.get_object(TOPPAGES_KEY)
+    data = json.loads(data_str)
     if data is None:
         return {"success": False, "data": None}
     
     return {"success": True, "data": data}
+
+    # data = read_json_file(TOPPAGES_FILE_PATH)
+    # if data is None:
+    #     return {"success": False, "data": None}
+    
+    # return {"success": True, "data": data}
