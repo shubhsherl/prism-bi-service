@@ -39,7 +39,7 @@ def run_test(url, cmd='', label=''):
         cmd,
         True, 
         True, 
-        True,
+        False,
         label,
         NUM_RUNS
     )
