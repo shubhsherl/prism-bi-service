@@ -6,6 +6,7 @@ from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from pkg.s3.client import S3Client
+from pkg.redis.client import RedisClient
 from cache.cache import InMemoryCache
 from helper.file import read_json_file
 
@@ -192,16 +193,17 @@ def run_lcp(url, n):
     return {"success": True, "data": data}
 
 def run_top_subpages():
+    redis_client = RedisClient()
+    data_str = redis_client.get(TOPPAGES_KEY)
+    if data_str is not None:
+        data = json.loads(data_str)
+        return {"success": True, "data": data}
+
     s3_client = S3Client()
     data_str = s3_client.get_object(TOPPAGES_KEY)
     data = json.loads(data_str)
     if data is None:
         return {"success": False, "data": None}
     
+    redis_client.set(TOPPAGES_KEY, data_str)
     return {"success": True, "data": data}
-
-    # data = read_json_file(TOPPAGES_FILE_PATH)
-    # if data is None:
-    #     return {"success": False, "data": None}
-    
-    # return {"success": True, "data": data}

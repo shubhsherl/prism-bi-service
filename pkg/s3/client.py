@@ -16,7 +16,7 @@ class S3Client:
         Returns:
             bytes: The contents of the object.
         """
-
+        print("Fetching object from S3...")
         response = self.s3.get_object(Bucket=self.bucket_name, Key=object_key)
         return response['Body'].read()
 
