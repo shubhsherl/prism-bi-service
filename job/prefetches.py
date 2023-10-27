@@ -1,6 +1,12 @@
 import requests
-import json
+import logging
 from bs4 import BeautifulSoup
+
+from helper.file import fetch_from_s3, store_in_s3
+from pkg.s3.keys import TOPPAGES_KEY, PREFETCHES_KEY
+
+# Create a logger instance
+logger = logging.getLogger('prefetches')
 
 TOPPAGES_FILE_PATH = "static/toppages.json"
 PREFETCHES_FILE_PATH = "static/prefetches.json"
@@ -59,9 +65,11 @@ def fetch_and_analyze_hints(url):
 
 def run():
     domains = []
-    # Load the list of domains from the input JSON file
-    with open(TOPPAGES_FILE_PATH, "r") as file:
-        domains = json.load(file)
+
+    domains = fetch_from_s3(TOPPAGES_KEY)
+    if domains is None:
+        logger.error(f"Error while fetching urls from {TOPPAGES_KEY}")
+        exit(1)
 
     results = []
     for domain in domains:
@@ -69,5 +77,4 @@ def run():
         hints = fetch_and_analyze_hints(url)
         results.append(hints)
     
-    with open(PREFETCHES_FILE_PATH, "w") as file:
-        json.dump(results, file, indent=4)
+    store_in_s3(PREFETCHES_KEY, results)

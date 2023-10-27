@@ -10,11 +10,11 @@ services:
       - REDIS_PASSWORD=${REDIS_PASSWORD}
     networks:
       - app-network
-  
-  api:
+
+  app: # for worker and API server
     build:
       context: .
-      dockerfile: Dockerfile.api
+      dockerfile: Dockerfile
     ports:
       - "8000:8000"
     depends_on:
@@ -25,24 +25,6 @@ services:
       - REDIS_PORT=6379
       - API_KEY=${API_KEY}
       - CX_ID=${CX_ID}
-      - CRUX_API_KEY=${CRUX_API_KEY}
-    networks:
-      - app-network
-    volumes:
-      - ./static:/app/static
-
-  cron-worker:
-    build:
-      context: .
-      dockerfile: Dockerfile.worker
-    depends_on:
-      - redis
-    environment:
-      - REDIS_HOST=redis
-      - REDIS_PASSWORD=${REDIS_PASSWORD}
-      - REDIS_PORT=6379
-      - WPT_URL=${WPT_URL}
-      - WPT_API_KEY=${WPT_API_KEY}
       - CRUX_API_KEY=${CRUX_API_KEY}
     networks:
       - app-network

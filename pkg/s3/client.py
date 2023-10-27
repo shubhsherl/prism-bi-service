@@ -1,4 +1,7 @@
 import boto3
+import logging
+
+logger = logging.getLogger('s3')
 
 class S3Client:
     def __init__(self):
@@ -16,7 +19,7 @@ class S3Client:
         Returns:
             bytes: The contents of the object.
         """
-        print("Fetching object from S3...")
+        logger.info("Fetching object from S3...")
         response = self.s3.get_object(Bucket=self.bucket_name, Key=object_key)
         return response['Body'].read()
 

@@ -2,13 +2,19 @@ import os
 import time
 import requests
 import json
+import logging
+
+from helper.file import fetch_from_s3, store_in_s3
+from pkg.s3.keys import TOPPAGES_KEY
+
+# Create a logger instance
+logger = logging.getLogger('top_page_lcp')
 
 # Set the API key.
 CRUX_API_KEY = os.getenv('CRUX_API_KEY')
-TOPPAGES_FILE_PATH = "static/toppages.json"
 
 def fetch_lcp_data(url):
-    print(f"Fetching CrUX data for {url}...")
+    logger.info(f"Fetching CrUX data for {url}...")
     # Construct the request URL.
     crux_url = "https://chromeuxreport.googleapis.com/v1/records:queryRecord?key={}".format(CRUX_API_KEY)
     
@@ -34,11 +40,11 @@ def fetch_lcp_data(url):
     if response.status_code == 429:
         # Handle 429 error by waiting and then retrying
         retry_after = int(response.headers.get("Retry-After", 30))
-        print(f"Retrying after {retry_after} seconds...")
+        logger.info(f"Retrying after {retry_after} seconds...")
         time.sleep(retry_after)
         return fetch_lcp_data(url)
     elif response.status_code != 200:
-        print(f"Error while fetching CrUX data for {url}: {response.status_code}")
+        logger.error(f"Error while fetching CrUX data for {url}: {response.status_code}")
         return
 
     # Parse the response.
@@ -47,7 +53,7 @@ def fetch_lcp_data(url):
 
 def parse_response(url, data):
     if 'record' not in data or 'metrics' not in data['record'] or 'largest_contentful_paint' not in data['record']['metrics']:
-        print(f"Error while parsing CrUX data for {url}: no record found")
+        logger.error(f"Error while parsing CrUX data for {url}: no record found")
         return
     
     lcp_p75 = data['record']['metrics']['largest_contentful_paint']['percentiles']['p75']
@@ -56,15 +62,15 @@ def parse_response(url, data):
 
 def run():
     if CRUX_API_KEY is None:
-        print("CRUX_API_KEY environment variable not set")
+        logger.error("CRUX_API_KEY environment variable not set")
         return
 
-    print("Running top pages LCP worker...")
+    logger.info("Running top pages LCP worker...")
 
-    domains = []
-    # Load the list of domains from the input JSON file
-    with open(TOPPAGES_FILE_PATH, "r") as file:
-        domains = json.load(file)
+    domains = fetch_from_s3(TOPPAGES_KEY)
+    if domains is None:
+        logger.error(f"Error while fetching urls from {TOPPAGES_KEY}")
+        return
 
     # Update the JSON with p75 LCP data for each domain
     updated_domains = []
@@ -76,7 +82,5 @@ def run():
             updated_domains.append(domain)
 
     # Save the updated JSON to the output file
-    with open(TOPPAGES_FILE_PATH, "w") as file:
-        json.dump(updated_domains, file, indent=4)
-
-    print(f"Updated JSON saved to {TOPPAGES_FILE_PATH}")
+    store_in_s3(TOPPAGES_KEY, updated_domains)
+    logger.info(f"Updated JSON saved to {TOPPAGES_KEY} in S3")

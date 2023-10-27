@@ -1,18 +1,21 @@
 import os
-import json
+import logging
 from urllib.parse import urlparse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from wpt.wpt import WPT
 import wpt.keys as wpt_keys
+from helper.file import fetch_from_s3, store_in_s3
+from pkg.s3.keys import RESULTS_KEY, PRISM_DOMAINS_KEY
+
+# Create a logger instance
+logger = logging.getLogger('build_report')
 
 MAX_DAYS = 30
 
 NUM_WORKER = int(os.getenv('NUM_WORKER', '10'))
 CHUNK_SIZE = int(os.getenv('CHUNK_SIZE', '100'))
 
-TEST_RESULTS_FILE = "static/test_results.json"
-URLS_FILE = "static/urls.json"
 MONITOR_LABEL_PREFIX = "monitor."
 
 BASE_URL = os.getenv('WPT_URL')
@@ -68,7 +71,7 @@ def fetch_results_list():
     return [result[wpt_keys.KEY_TEST_ID] for result in results if is_valid_test(result)]
 
 def fetch_results_for_chunk(chunk):
-    print(f"Fetching results for {len(chunk)} tests...")
+    logger.info(f"Fetching results for {len(chunk)} tests...")
     wpt_instance = WPT(BASE_URL, WPT_API_KEY)
     chunk_results = wpt_instance.get_results(chunk, False)
     valid_results = [parse_result(result) for result in chunk_results if is_valid_result(result)]
@@ -77,7 +80,7 @@ def fetch_results_for_chunk(chunk):
 
 def fetch_results():
     result_list = fetch_results_list()
-    print(f"Fetching results for {len(result_list)} tests...")
+    logger.info(f"Fetching results for {len(result_list)} tests...")
     results = []
     
     with ThreadPoolExecutor(max_workers=NUM_WORKER) as executor:
@@ -114,11 +117,10 @@ def parse_result(result):
 
 def run():
     global monitored_urls
-    # load urls.json file
-    with open(URLS_FILE) as f:
-        monitored_urls = json.load(f)
+    monitored_urls = fetch_from_s3(PRISM_DOMAINS_KEY)
+    if monitored_urls is None:
+        logger.error(f"Error while fetching monitored urls from {PRISM_DOMAINS_KEY}")
+        exit(1)
 
     results = fetch_results()
-    # write results to file
-    with open(TEST_RESULTS_FILE, 'w') as f:
-        json.dump(results, f, indent=4)
+    store_in_s3(RESULTS_KEY, results)

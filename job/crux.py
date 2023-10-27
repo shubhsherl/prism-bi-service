@@ -1,15 +1,19 @@
 import os
 import json
 import requests
+import logging
+
+from helper.file import fetch_from_s3, store_in_s3
+from pkg.s3.keys import CRUX_RESULTS_KEY, PRISM_DOMAINS_KEY
+
+# Create a logger instance
+logger = logging.getLogger('crux')
 
 # Set the API key.
 CRUX_API_KEY = os.getenv('CRUX_API_KEY')
-CRUX_RESULTS_FILE = "static/crux_results.json"
-
-URLS_FILE = "static/urls.json"
 
 def fetch_crux_data(url):
-    print(f"Fetching CrUX data for {url}...")
+    logger.info(f"Fetching CrUX data for {url}...")
     # Construct the request URL.
     crux_url = "https://chromeuxreport.googleapis.com/v1/records:queryRecord?key={}".format(CRUX_API_KEY)
     
@@ -33,7 +37,7 @@ def fetch_crux_data(url):
     )
 
     if response.status_code != 200:
-        print(f"Error while fetching CrUX data for {url}: {response.status_code}")
+        logger.error(f"Error while fetching CrUX data for {url}: {response.status_code}")
         return
 
     # Parse the response.
@@ -42,7 +46,7 @@ def fetch_crux_data(url):
 
 def parse_response(url, data):
     if 'record' not in data or 'metrics' not in data['record'] or 'largest_contentful_paint' not in data['record']['metrics']:
-        print(f"Error while parsing CrUX data for {url}: no record found")
+        logger.error(f"Error while parsing CrUX data for {url}: no record found")
         return
     
     lcp = {
@@ -65,13 +69,15 @@ def parse_response(url, data):
 
 def run():
     if CRUX_API_KEY is None or CRUX_API_KEY == '':
-        print("CRUX_API_KEY env variable is not set.")
+        logger.error("CRUX_API_KEY env variable is not set.")
         exit(1)
 
     urls = []
     # load urls.json file
-    with open(URLS_FILE) as f:
-        urls = json.load(f)
+    urls = fetch_from_s3(PRISM_DOMAINS_KEY)
+    if urls is None:
+        logger.error(f"Error while fetching urls from {PRISM_DOMAINS_KEY}")
+        exit(1)
 
     reports = []
     # loop over urls and fetch Crux data
@@ -88,5 +94,4 @@ def run():
                 reports.append(data)
 
     # write results to file
-    with open(CRUX_RESULTS_FILE, 'w') as f:
-        json.dump(reports, f, indent=4)
+    store_in_s3(CRUX_RESULTS_KEY, reports)

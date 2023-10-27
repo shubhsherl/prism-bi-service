@@ -5,8 +5,12 @@ from bs4 import BeautifulSoup
 import time
 import json
 import os
+import logging
 from prettytable import PrettyTable
 from .helper import format_time, format_bytes, format_float, clean_json_text
+
+# Create a logger instance
+logger = logging.getLogger('monitor_hint')
 
 class WPT:
     def __init__(self, base_url, api_key):
@@ -17,13 +21,13 @@ class WPT:
         while True:
             results_response = requests.get(f"{self.base_url}/jsonResult.php?test={test_id}")
             if results_response.status_code != 200:
-                print(f"Error while fetching results: {results_response.text}")
+                logger.error(f"Error while fetching results: {results_response.text}")
                 return
 
             results_data = json.loads(clean_json_text(results_response.text))
-            print(f"Test status for {test_id}: {results_data['statusText']}")
+            logger.info(f"Test status for {test_id}: {results_data['statusText']}")
             if results_data['statusCode'] == 200:
-                print(f"View results: {results_data['data']['summary']}")
+                logger.info(f"View results: {results_data['data']['summary']}")
                 return results_data
 
             if not wait:
@@ -40,7 +44,7 @@ class WPT:
         response = requests.get(f"{self.base_url}/getgzip.php?test={test_id}&file={run}_netlog.txt", stream=True)
         
         if response.status_code != 200:
-            print(f"Netlog not found for test: {test_id} {response.text}")
+            logger.error(f"Netlog not found for test: {test_id} {response.text}")
             return
         
         directory = 'netlogs'
@@ -57,7 +61,7 @@ class WPT:
             for chunk in response.iter_content(chunk_size=8192):
                 f.write(chunk)
 
-        print(f"Netlog file saved in {directory}/{test_id}_netlog_{run}.json")
+        logger.info(f"Netlog file saved in {directory}/{test_id}_netlog_{run}.json")
 
     def run_test(self, url, location, browser, network, command_line, filmstrip, wait, netlogs=False, label='', runs=1):
         params = {
@@ -79,20 +83,20 @@ class WPT:
         if filmstrip:
             params['video'] = '1'
 
-        print(f"Running test for {url} on {network} in {browser} at {location}...")
+        logger.info(f"Running test for {url} on {network} in {browser} at {location}...")
         response = requests.get(f"{self.base_url}/runtest.php", params=params)
         if response.status_code != 200:
-            print(f"Error while running test: {response.text}")
+            logger.error(f"Error while running test: {response.text}")
             return
         
         data = response.json()
 
         if data['statusCode'] != 200:
-            print(f"Error: {data['statusText']}")
+            logger.error(f"Error: {data['statusText']}")
             return
 
         test_id = data['data']['testId']
-        print(f"Test started with ID: {test_id}")
+        logger.info(f"Test started with ID: {test_id}")
 
         if wait:
             test_result = self.wait_for_test_result(test_id, wait)
@@ -111,7 +115,7 @@ class WPT:
         endpoint = f"{self.base_url}/testlog.php?days={days}&nolimit=1&filter={filter}&all=on&k={self.api_key}&f=csv"
         response = requests.get(endpoint)
         if response.status_code != 200:
-            print(f"Error while fetching tests list: {response.text}")
+            logger.error(f"Error while fetching tests list: {response.text}")
             return
 
         data = response.text
@@ -135,12 +139,12 @@ class WPT:
             results.append(row_dict)
         
         if print_table:
-            print(table)
+            logger.info(table)
 
         return results
 
     def get_results(self, test_ids, wait, netlogs=False, print_data=False):
-        print(f"Fetching results for {len(test_ids)} tests...")
+        logger.info(f"Fetching results for {len(test_ids)} tests...")
         avg_results = []
         results = []
         for test_id in test_ids:
@@ -157,7 +161,7 @@ class WPT:
             results.append(results_data['data'])
 
         if print_data:
-            print(f"Comparison link: {self.base_url}/video/compare.php?tests={','.join(test_ids)}")
+            logger.info(f"Comparison link: {self.base_url}/video/compare.php?tests={','.join(test_ids)}")
             self.pretty_print(avg_results)
         return results
     
@@ -215,7 +219,7 @@ class WPT:
                 format_bytes(repeat_view.get('bytesIn', "N/A"))
             ])
 
-        print(table)
+        logger.info(table)
 
     def compare(self, urls, location, browser, network_types, command_line=None, filmstrip=False, wait=False):
         test_ids = []
@@ -231,6 +235,6 @@ class WPT:
         if wait:
             self.get_results(test_ids, compare=True, print_data=True)
         else:
-            print(f"Comparison link: {self.base_url}/video/compare.php?tests={','.join(test_ids)}")
-            print("Results will be available once the tests are complete.")
-            print(f"Run script: python run.py result -i {' '.join(test_ids)}")
+            logger.info(f"Comparison link: {self.base_url}/video/compare.php?tests={','.join(test_ids)}")
+            logger.info("Results will be available once the tests are complete.")
+            logger.info(f"Run script: python run.py result -i {' '.join(test_ids)}")

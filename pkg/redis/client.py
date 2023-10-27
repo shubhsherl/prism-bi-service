@@ -1,5 +1,8 @@
 import os
 import redis
+import logging
+
+logger = logging.getLogger('redis')
 
 class RedisClient:
     def __init__(self):
@@ -9,14 +12,14 @@ class RedisClient:
         self.redis = redis.StrictRedis(host=host, port=port, password=password, decode_responses=True)
 
     def set(self, key, value, ttl= 60 * 60 * 24):
-        print(f"Setting {key} in Redis...")
+        logger.info(f"Setting {key} in Redis...")
         if ttl is None:
             self.redis.set(key, value)
         else:
             self.redis.setex(key, ttl, value)
 
     def get(self, key):
-        print(f"Fetching {key} from Redis...")
+        logger.info(f"Fetching {key} from Redis...")
         return self.redis.get(key)
 
     def delete(self, key):

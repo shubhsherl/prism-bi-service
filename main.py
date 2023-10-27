@@ -5,6 +5,14 @@ import api.test_results as api_test_results
 import api.crux_results as api_crux_results
 import api.url_prefetches as api_url_prefetches
 import urllib.parse
+import logging
+
+# Set up the logger
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Create a logger instance
+logger = logging.getLogger('main')
+logger.info("Starting api server...")
 
 app = FastAPI()
 

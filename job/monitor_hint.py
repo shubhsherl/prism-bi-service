@@ -1,12 +1,16 @@
-import json
+import logging
 import os
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
+from helper.file import fetch_from_s3
+from pkg.s3.keys import PRISM_DOMAINS_KEY
 from wpt.wpt import WPT
+
+# Create a logger instance
+logger = logging.getLogger('monitor_hint')
 
 HINT_TAG = "hints"
 NO_HINT_TAG = "nohints"
-URLS_FILE = "static/urls.json"
 
 NUM_RUNS = 5
 
@@ -28,7 +32,7 @@ HINT_CMD_V15 = "--hint_selection=PL_RB_CSS-PL_RB_SCRIPT-PL_PRB_CSS-PL_PRB_SCRIPT
 HINT_CMD = "--hint-selection=PL_RB_CSS-PL_RB_SCRIPT-PL_PRB_CSS-PL_PRB_SCRIPT-PLH_LCP_IMAGE-PL_LCP_MEDIA-PLH_LINK_IMAGE-PC_VHIGH_CSS-PC_VHIGH_SCRIPT-PL_VHIGH_FONT --link-hints-disabled"
 
 def run_test(url, cmd='', label=''):
-    print(f"Running wpt test with label: {label}")
+    logger.info(f"Running wpt test with label: {label}")
 
     wpt_instance = WPT(BASE_URL, WPT_API_KEY)
     wpt_instance.run_test(
@@ -60,14 +64,15 @@ def compare_hints(name, origin, path=''):
 
 def run():
     if WPT_API_KEY is None or WPT_API_KEY == '':
-        print("WPT_API_KEY env variable is not set.")
+        logger.error("WPT_API_KEY env variable is not set.")
         exit(1)
 
     urls = []
     # load urls.json file
-    with open(URLS_FILE) as f:
-        urls = json.load(f)
-
+    urls = fetch_from_s3(PRISM_DOMAINS_KEY)
+    if urls is None:
+        logger.error(f"Error while fetching urls from {PRISM_DOMAINS_KEY}")
+        exit(1)
 
     with ThreadPoolExecutor(max_workers=NUM_WORKER) as executor:
         # List to store the future objects of the tasks

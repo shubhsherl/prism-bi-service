@@ -1,9 +1,8 @@
-from helper.file import read_json_file
-
-TEST_RESULTS_FILE_PATH = './static/prefetches.json'
+from helper.file import fetch_from_s3
+from pkg.s3.keys import PREFETCHES_KEY
 
 def run():
-    data = read_json_file(TEST_RESULTS_FILE_PATH)
+    data = fetch_from_s3(PREFETCHES_KEY)
     if data is None:
         return {"success": False, "data": None}
     

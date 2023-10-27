@@ -1,14 +1,16 @@
 import os
 import json
 import requests
+import logging
 from googleapiclient.discovery import build
 from bs4 import BeautifulSoup
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-from pkg.s3.client import S3Client
-from pkg.redis.client import RedisClient
 from cache.cache import InMemoryCache
-from helper.file import read_json_file
+from helper.file import fetch_from_s3
+from pkg.s3.keys import TOPPAGES_KEY
+
+logger = logging.getLogger('top_subpages')
 
 API_KEY = os.getenv('API_KEY')
 CRUX_API_KEY = os.getenv('CRUX_API_KEY')
@@ -26,9 +28,6 @@ FORM_FACTOR_AGENT = {
 }
 
 NUM_WORKER=50
-
-TOPPAGES_FILE_PATH = './static/toppages.json'
-TOPPAGES_KEY = 'public/toppages_v1.json'
 
 cache = InMemoryCache(max_size=100)
 
@@ -143,20 +142,20 @@ def _fetch_lcp_75_crux(url, crux_key):
             response.raise_for_status()
             data = response.json()
         except requests.exceptions.RequestException:
-            print(f"Chrome UX report data not found for {url} ({form_factor})")
+            logger.error(f"Chrome UX report data not found for {url} ({form_factor})")
             lcp_results[form_factor] = None
             continue
 
         # Parse the CrUX data to retrieve the LCP value
         if 'record' in data and 'metrics' in data['record']:
             metrics = data['record']['metrics']
-            print("url={}.".format(url))
+            logger.info("url={}.".format(url))
             if 'largest_contentful_paint' in metrics:
                 lcp_data = metrics['largest_contentful_paint']
                 # Store the 75th percentile value for the form factor
                 result['p75'] = lcp_data['percentiles']['p75']
         else:
-            print(f"Chrome UX report data not found for {url} ({form_factor})")
+            logger.warn(f"Chrome UX report data not found for {url} ({form_factor})")
             result['p75'] = None
 
         result['hints'] = fetch_hints(url, form_factor)
@@ -193,17 +192,8 @@ def run_lcp(url, n):
     return {"success": True, "data": data}
 
 def run_top_subpages():
-    redis_client = RedisClient()
-    data_str = redis_client.get(TOPPAGES_KEY)
-    if data_str is not None:
-        data = json.loads(data_str)
-        return {"success": True, "data": data}
-
-    s3_client = S3Client()
-    data_str = s3_client.get_object(TOPPAGES_KEY)
-    data = json.loads(data_str)
+    data = fetch_from_s3(TOPPAGES_KEY)
     if data is None:
         return {"success": False, "data": None}
     
-    redis_client.set(TOPPAGES_KEY, data_str)
     return {"success": True, "data": data}

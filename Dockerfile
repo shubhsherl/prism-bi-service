@@ -16,5 +16,8 @@ COPY . .
 # Expose the port your FastAPI app will run on
 EXPOSE 8000
 
-# Define the command to run your FastAPI application
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000"]
+# Set permissions for the start script
+RUN chmod +x ./start.sh
+
+# Define the command to run your the start script
+CMD ["./start.sh"]

@@ -1,8 +1,15 @@
-print("Starting worker...")
 import schedule
 import time
+import logging
 
 from job import monitor_hint, build_report, crux, top_page_lcp, prefetches
+
+# Set up the logger
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+
+# Create a logger instance
+logger = logging.getLogger('worker')
+logger.info("Starting worker...")
 
 tz = "Asia/Kolkata"
 
@@ -15,5 +22,5 @@ schedule.every(1).day.at("23:00", tz).do(prefetches.run)
 
 while True:
     schedule.run_pending()
-    print("Sleeping for 5 minutes...")
+    logger.info("Sleeping for 5 minutes...")
     time.sleep(5 * 60) # 5 minutes
