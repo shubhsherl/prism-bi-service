@@ -1,4 +1,4 @@
-from fastapi import FastAPI, Query
+from fastapi import FastAPI, Query, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
 import api.top_subpages as api_top_subpages
 import api.test_results as api_test_results
@@ -15,6 +15,7 @@ logger = logging.getLogger('main')
 logger.info("Starting api server...")
 
 app = FastAPI()
+router = APIRouter()
 
 @app.middleware("http")
 async def add_cors_headers(request, call_next):
@@ -39,27 +40,29 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-@app.get("/")
+@router.get("/")
 async def root():
     return {"message": "Hello World"}
 
-@app.get("/top-subpages-lcp")
+@router.get("/top-subpages-lcp")
 async def top_subpages(url: str = Query(..., title="Encoded URL"), n: int = Query(10, title="n")):
     decoded_url = urllib.parse.unquote(url)
     return api_top_subpages.run_lcp(decoded_url, n)
 
-@app.get("/top-subpages")
+@router.get("/top-subpages")
 async def top_subpages():
     return api_top_subpages.run_top_subpages()
 
-@app.get("/test-results")
+@router.get("/test-results")
 async def test_results():
     return api_test_results.run()
 
-@app.get("/crux-results")
+@router.get("/crux-results")
 async def crux_results():
     return api_crux_results.run()
 
-@app.get("/url-prefetches")
+@router.get("/url-prefetches")
 async def url_prefetches():
     return api_url_prefetches.run()
+
+app.include_router(router, prefix="/v1")

@@ -22,3 +22,10 @@ docker-compose up # to run in foreground
 ```
 docker-compose down
 ```
+
+## To check logs
+```
+tail -f ./logs/api.log # api server logs
+
+tail -f ./logs/worker.log # worker server logs
+```

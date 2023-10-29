@@ -26,6 +26,8 @@ services:
       - API_KEY=${API_KEY}
       - CX_ID=${CX_ID}
       - CRUX_API_KEY=${CRUX_API_KEY}
+      - WPT_URL=${WPT_URL}
+      - WPT_API_KEY=${WPT_API_KEY}
     networks:
       - app-network
     volumes:
